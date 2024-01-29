@@ -31,7 +31,7 @@ npm run build
 ### Run Unit Tests with [Vitest](https://vitest.dev/)
 
 ```sh
-npm run test:unit
+npm run test
 ```
 
 ### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
