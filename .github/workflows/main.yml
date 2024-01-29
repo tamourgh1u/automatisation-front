@@ -1,0 +1,25 @@
+name: Deploy to GitHub pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  hello:
+    name: Echo Hello World
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo Hello World
