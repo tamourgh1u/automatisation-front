@@ -18,8 +18,54 @@ permissions:
   id-token: write
 
 jobs:
-  hello:
-    name: Echo Hello World
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo Hello World
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint and format
+        run: npm run lint && npm run format
+
+        - run: |
+          git diff --exit-code || (git config user.name "${{ github.actor }}" && git config user.email "${{ github.actor }}@users.noreply.github.com" && git commit -am "Apply lint and format changes")
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build for production
+        run: npm run build
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run E2E tests
+        run: npm run test:e2e:dev
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    needs: e2e-tests
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
